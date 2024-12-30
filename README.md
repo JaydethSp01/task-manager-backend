@@ -2,7 +2,7 @@
 
 Este proyecto es un servidor RESTful desarrollado con **Node.js**, **Express** y **MongoDB** para gestionar tareas. ✅
 
-El servidor permite crear, leer, actualizar y eliminar tareas. La autenticación de los usuarios se maneja mediante tokens JWT.
+El servidor permite crear, leer, actualizar y eliminar tareas. La autenticación de los metodos CRUS se maneja mediante tokens JWT.
 
 ## 🌟 Características principales
 
