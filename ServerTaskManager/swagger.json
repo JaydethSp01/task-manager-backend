@@ -1,0 +1,291 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Gestión de Tareas",
+    "version": "1.0.0",
+    "description": "Esta API permite gestionar tareas dentro de un sistema de administración de tareas. Permite crear, consultar, actualizar y eliminar tareas."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Servidor local para pruebas"
+    }
+  ],
+  "paths": {
+    "/generate-token": {
+      "get": {
+        "tags": ["Autenticación"],
+        "summary": "Genera un token JWT para autenticar las solicitudes de la API",
+        "responses": {
+          "200": {
+            "description": "Token generado con éxito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "Token JWT generado que se usará para autenticar las solicitudes en métodos CRUD"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "post": {
+        "tags": ["Tareas"],
+        "summary": "Crea una nueva tarea",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Nueva tarea"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Descripción detallada de la tarea"
+                  },
+                  "completed": {
+                    "type": "boolean",
+                    "example": false
+                  }
+                },
+                "required": ["title"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tarea creada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud incorrecta. El campo 'title' es obligatorio."
+          }
+        }
+      },
+      "get": {
+        "tags": ["Tareas"],
+        "summary": "Obtiene la lista de todas las tareas",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "completed",
+            "in": "query",
+            "description": "Filtra las tareas según su estado (completadas o pendientes)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["completed", "pending"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tareas obtenidas correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "tags": ["Tareas"],
+        "summary": "Obtiene los detalles de una tarea específica usando su ID",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID único de la tarea a consultar",
+            "schema": {
+              "type": "string",
+              "example": "676f77f5e09224b08c9c8sdssfd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea encontrada correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "La tarea solicitada no fue encontrada"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tareas"],
+        "summary": "Actualiza los datos de una tarea existente",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID único de la tarea a actualizar",
+            "schema": {
+              "type": "string",
+              "example": "676f77f5e09224b08c9c8sdssfd"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Tarea actualizada"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Descripción modificada"
+                  },
+                  "completed": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                },
+                "required": ["title"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarea actualizada correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "La solicitud está mal formada o incompleta"
+          },
+          "404": {
+            "description": "No se pudo encontrar la tarea para actualizar"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tareas"],
+        "summary": "Elimina una tarea utilizando su ID",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID único de la tarea a eliminar",
+            "schema": {
+              "type": "string",
+              "example": "676f77f5e09224b08c9c8sdssfd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea eliminada correctamente"
+          },
+          "404": {
+            "description": "La tarea solicitada no fue encontrada"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "tasks": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "676f77f5e09224b08c9c8sdssfd"
+          },
+          "title": {
+            "type": "string",
+            "example": "Tarea de ejemplo"
+          },
+          "description": {
+            "type": "string",
+            "example": "Descripción de la tarea"
+          },
+          "completed": {
+            "type": "boolean",
+            "example": false
+          }
+        },
+        "required": ["id", "title", "completed"]
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
