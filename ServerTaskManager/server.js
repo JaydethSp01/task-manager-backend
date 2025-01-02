@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(compression());
 
 app.use((req, res, next) => {
-  res.set("Cache-Control", "public, max-age=60");
+  res.set("Cache-Control", "public, max-age=2");
   next();
 });
 
